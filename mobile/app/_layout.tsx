@@ -56,8 +56,9 @@ function RootLayoutNav() {
   useEffect(() => {
     const inAuthGroup = segments[0] === '(auth)';
 
-    if (!token && !inAuthGroup) {      
-      router.replace('/(auth)/login'); 
+    if (!token && !inAuthGroup) {
+      // Importante: use o caminho exato aqui também
+      router.replace('/(auth)'); 
     } else if (token && inAuthGroup) {
       router.replace('/(tabs)');
     }
@@ -66,7 +67,7 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(auth)/index" /> 
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
