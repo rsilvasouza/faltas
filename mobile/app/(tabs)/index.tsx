@@ -1,68 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-
-const MOCK_LISTS = [
-  {
-    id: "1",
-    title: "Compras Mensal",
-    status: "aberto",
-    date: "28/12/2025",
-    items: 15,
-  },
-  {
-    id: "2",
-    title: "Manutenção Escritório",
-    status: "aberto",
-    date: "27/12/2025",
-    items: 4,
-  },
-  {
-    id: "3",
-    title: "Feira Semanal",
-    status: "fechado",
-    date: "20/12/2025",
-    items: 10,
-  },
-  {
-    id: "4",
-    title: "Lista de Presentes",
-    status: "fechado",
-    date: "15/12/2025",
-    items: 5,
-  },
-];
+import { ListaService } from "@/src/services/ListaService";
 
 export default function Home() {
   const router = useRouter();
   const [filter, setFilter] = useState<"aberto" | "fechado">("aberto");
+  const [lista, setLista] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const fetchListas = async () => {
+    try {
+      setLoading(true);
+      const data = await ListaService.getAll();
+      setLista(data ?? []);
+    } catch (error) {
+      console.error("Erro ao carregar listas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const filteredData = MOCK_LISTS.filter((item) => item.status === filter);
+  useEffect(() => {
+    fetchListas();
+  }, []);
 
-  const renderCard = ({ item }: { item: (typeof MOCK_LISTS)[0] }) => (
-    <TouchableOpacity style={styles.card}>
-      <View style={styles.cardInfo}>
-        <Text style={styles.cardTitle}>{item.title}</Text>
-        <Text style={styles.cardSubtitle}>
-          {item.items} itens • {item.date}
-        </Text>
-      </View>
-      <Ionicons
-        name={item.status === "aberto" ? "chevron-forward" : "checkmark-circle"}
-        size={24}
-        color={item.status === "aberto" ? "#2563eb" : "#10b981"}
-      />
-    </TouchableOpacity>
-  );
+  const filteredData = lista.filter((item) => {
+    const isFechado = item.fechamento !== null && item.fechamento !== undefined;
+    return filter === "fechado" ? isFechado : !isFechado;
+  });
+
+  const renderCard = ({ item }: { item: any }) => {
+    const estaFechado =
+      item.fechamento !== null && item.fechamento !== undefined;
+
+    return (
+      <TouchableOpacity style={styles.card}>
+        <View style={styles.cardInfo}>
+          <Text style={styles.cardTitle}>{item.nome}</Text>
+          <Text style={styles.cardSubtitle}>
+            {estaFechado ? `Finalizada em: ${item.fechamento}` : "Aberta"}
+          </Text>
+        </View>
+        <Ionicons
+          name={estaFechado ? "checkmark-circle" : "chevron-forward"}
+          size={24}
+          color={estaFechado ? "#10b981" : "#2563eb"}
+        />
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -76,7 +72,6 @@ export default function Home() {
         </TouchableOpacity>
       </View>
 
-      {/* Filtros Estilizados */}
       <View style={styles.filterContainer}>
         <TouchableOpacity
           style={[
@@ -113,15 +108,26 @@ export default function Home() {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={filteredData}
-        keyExtractor={(item) => item.id}
-        renderItem={renderCard}
-        contentContainerStyle={styles.listContent}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>Nenhuma lista encontrada.</Text>
-        }
-      />
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#2563eb"
+          style={{ marginTop: 20 }}
+        />
+      ) : (
+        <FlatList
+          data={filteredData}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderCard}
+          contentContainerStyle={styles.listContent}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>Nenhuma lista encontrada.</Text>
+          }
+          // Adiciona "puxar para atualizar"
+          onRefresh={fetchListas}
+          refreshing={loading}
+        />
+      )}
     </SafeAreaView>
   );
 }

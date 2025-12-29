@@ -1,9 +1,9 @@
 import { api } from './api';
 
 export interface Lista {
-  id: string;
+  id: number;
   nome: string;
-  status: 'aberto' | 'fechado';
+  fechamento: Date | null;
   created_at: string;
 }
 

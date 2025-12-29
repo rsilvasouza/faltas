@@ -8,7 +8,7 @@ class ListaRepository
 {
     public function all()
     {
-        return Lista::all();
+        return Lista::select('id', 'nome', 'fechamento')->get();
     }
 
     public function findByName(string $name)
