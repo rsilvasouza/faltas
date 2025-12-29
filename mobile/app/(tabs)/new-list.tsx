@@ -26,10 +26,6 @@ export default function NewList() {
       router.back();
     } catch (error) {
       Alert.alert("Erro", "Falha ao salvar");
-      if (error.response) {
-    console.log("Headers enviados:", error.config.headers); // <--- Veja se o Authorization aparece aqui
-    console.log("Mensagem do servidor:", error.response.data.message);
-  }
     } finally {
       setLoading(false);
     }
