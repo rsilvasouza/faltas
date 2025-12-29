@@ -11,6 +11,11 @@ class ItemRepository
         return Item::all();
     }
 
+    public function findByName(string $name)
+    {
+        return Item::where('name', $name)->first();
+    }
+
     public function create(array $data)
     {
         return Item::create($data);

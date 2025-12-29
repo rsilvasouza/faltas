@@ -1,33 +1,49 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
-import { api } from '../../src/services/api';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { useAuth } from "@/src/store/auth";
+import { AuthService } from "@/src/services/AuthService"; // Importe o novo service
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   const setToken = useAuth((state) => state.setToken);
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Erro", "Preencha todos os campos");
+      return;
+    }
+
+    setLoading(true);
     try {
-      const response = await api.post("/login", { email, password });
-      console.log(`response: `, response);
-      const token = response.data.access_token;
-      if (token) {
-        setToken(token);
+      const data = await AuthService.login(email, password);
+
+      if (data.access_token) {
+        setToken(data.access_token);
       } else {
-        Alert.alert("Erro", "Token não recebido.");
+        Alert.alert("Erro", "Falha na autenticação: Token não encontrado.");
       }
-    } catch (error) {
-      Alert.alert("Erro", "Usuário ou senha inválidos");
+    } catch (error: any) {
+      const msg = error.response?.data?.message || "E-mail ou senha incorretos";
+      Alert.alert("Erro no Login", msg);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Minhas Listas</Text>
 
       <TextInput
         placeholder="E-mail"
@@ -35,6 +51,7 @@ export default function Login() {
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
+        keyboardType="email-address"
       />
 
       <TextInput
@@ -45,8 +62,16 @@ export default function Login() {
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Entrar</Text>
+      <TouchableOpacity
+        style={[styles.button, loading && { opacity: 0.7 }]}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Entrar</Text>
+        )}
       </TouchableOpacity>
     </View>
   );

@@ -1,31 +1,190 @@
-import { StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+const MOCK_LISTS = [
+  {
+    id: "1",
+    title: "Compras Mensal",
+    status: "aberto",
+    date: "28/12/2025",
+    items: 15,
+  },
+  {
+    id: "2",
+    title: "Manutenção Escritório",
+    status: "aberto",
+    date: "27/12/2025",
+    items: 4,
+  },
+  {
+    id: "3",
+    title: "Feira Semanal",
+    status: "fechado",
+    date: "20/12/2025",
+    items: 10,
+  },
+  {
+    id: "4",
+    title: "Lista de Presentes",
+    status: "fechado",
+    date: "15/12/2025",
+    items: 5,
+  },
+];
 
-export default function TabOneScreen() {
+export default function Home() {
+  const router = useRouter();
+  const [filter, setFilter] = useState<"aberto" | "fechado">("aberto");
+
+  const filteredData = MOCK_LISTS.filter((item) => item.status === filter);
+
+  const renderCard = ({ item }: { item: (typeof MOCK_LISTS)[0] }) => (
+    <TouchableOpacity style={styles.card}>
+      <View style={styles.cardInfo}>
+        <Text style={styles.cardTitle}>{item.title}</Text>
+        <Text style={styles.cardSubtitle}>
+          {item.items} itens • {item.date}
+        </Text>
+      </View>
+      <Ionicons
+        name={item.status === "aberto" ? "chevron-forward" : "checkmark-circle"}
+        size={24}
+        color={item.status === "aberto" ? "#2563eb" : "#10b981"}
+      />
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.welcome}>Minhas Listas</Text>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => router.push("/(tabs)/new-list")}
+        >
+          <Ionicons name="add" size={30} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Filtros Estilizados */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.filterBtn,
+            filter === "aberto" && styles.filterBtnActive,
+          ]}
+          onPress={() => setFilter("aberto")}
+        >
+          <Text
+            style={[
+              styles.filterText,
+              filter === "aberto" && styles.filterTextActive,
+            ]}
+          >
+            Abertas
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.filterBtn,
+            filter === "fechado" && styles.filterBtnActive,
+          ]}
+          onPress={() => setFilter("fechado")}
+        >
+          <Text
+            style={[
+              styles.filterText,
+              filter === "fechado" && styles.filterTextActive,
+            ]}
+          >
+            Fechadas
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <FlatList
+        data={filteredData}
+        keyExtractor={(item) => item.id}
+        renderItem={renderCard}
+        contentContainerStyle={styles.listContent}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>Nenhuma lista encontrada.</Text>
+        }
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  container: { flex: 1, backgroundColor: "#f8fafc" },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  welcome: { fontSize: 24, fontWeight: "bold", color: "#1e293b" },
+  addButton: {
+    backgroundColor: "#2563eb",
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4, // Sombra Android
+    shadowColor: "#000", // Sombra iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  filterContainer: {
+    flexDirection: "row",
+    backgroundColor: "#e2e8f0",
+    marginHorizontal: 20,
+    borderRadius: 10,
+    padding: 4,
+    marginBottom: 20,
+  },
+  filterBtn: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 8,
+    alignItems: "center",
+    borderRadius: 8,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  filterBtnActive: { backgroundColor: "#fff", elevation: 2 },
+  filterText: { fontWeight: "600", color: "#64748b" },
+  filterTextActive: { color: "#2563eb" },
+  listContent: { paddingHorizontal: 20, paddingBottom: 20 },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#f1f5f9",
+    elevation: 2,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  cardInfo: { flex: 1 },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#334155",
+    marginBottom: 4,
   },
+  cardSubtitle: { fontSize: 13, color: "#94a3b8" },
+  emptyText: { textAlign: "center", marginTop: 50, color: "#94a3b8" },
 });
