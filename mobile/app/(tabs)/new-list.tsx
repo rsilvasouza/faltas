@@ -10,7 +10,7 @@ import {
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ItemService } from "@/src/services/ItemService";
+import { ListaService } from "@/src/services/ListaService";
 
 export default function NewList() {
   const [nome, setName] = useState("");
@@ -20,12 +20,16 @@ export default function NewList() {
   const handleCreate = async () => {
     setLoading(true);
     try {
-      await ItemService.create(nome);
+      await ListaService.create(nome);
 
       Alert.alert("Sucesso", "Lista criada!");
       router.back();
     } catch (error) {
       Alert.alert("Erro", "Falha ao salvar");
+      if (error.response) {
+    console.log("Headers enviados:", error.config.headers); // <--- Veja se o Authorization aparece aqui
+    console.log("Mensagem do servidor:", error.response.data.message);
+  }
     } finally {
       setLoading(false);
     }
