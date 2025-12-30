@@ -14,4 +14,9 @@ class ProdutoService
     {
         return $this->repository->searchByName($term);
     }
+
+    public function create(array $data)
+    {
+        return $this->repository->create($data);
+    }
 }

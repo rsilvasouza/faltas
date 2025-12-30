@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Domains\Produto\Service\ProdutoService;
 use App\Http\Controllers\Controller;
-use App\Domains\Produto\Entities\Produto;
 use Illuminate\Http\Request;
 
 class ProdutoController extends Controller
@@ -22,5 +21,15 @@ class ProdutoController extends Controller
 
         $produtos = $this->service->search($term);
         return response()->json($produtos);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nome' => 'required|string|unique:produtos,nome'
+        ]);
+
+        $produto = $this->service->create($validated);
+        return response()->json($produto, 201);
     }
 }

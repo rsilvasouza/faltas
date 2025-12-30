@@ -23,9 +23,10 @@ class ListaItemController extends Controller
         }
     }
 
-    public function store(Request $request, $listaId)
+    public function store(Request $request): JsonResponse
     {
         $listaItem = $request->validate([
+            'lista_id' => 'required|integer',
             'produto_id' => 'required|exists:produtos,id',
             'grupo_id' => 'required|exists:grupos,id',
             'quantidade' => 'required|integer|min:1',

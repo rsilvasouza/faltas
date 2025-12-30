@@ -12,4 +12,9 @@ class ProdutoRepository
             ->limit(10)
             ->get(['id', 'nome']);
     }
+
+    public function create(array $data)
+    {
+        return Produto::create($data);
+    }
 }

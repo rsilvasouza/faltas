@@ -13,7 +13,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
-import { ListaItemService} from "@/src/services/ListaItemService";
+import { ListaItemService } from "@/src/services/ListaItemService";
 import { Produto } from "@/src/services/ProdutoService";
 import { Grupo, GrupoService } from "@/src/services/GrupoService";
 import { ProdutoService } from "@/src/services/ProdutoService";
@@ -36,6 +36,15 @@ export default function AddItem() {
   const [grupoId, setGrupoId] = useState("");
   const [quantidade, setQuantidade] = useState("1");
   const [preco, setPreco] = useState("");
+
+  const resetForm = () => {
+    setSearchText("");
+    setProdutoSelecionado(null);
+    setGrupoId("");
+    setQuantidade("1");
+    setPreco("");
+    setSugestoes([]);
+  };
 
   // Carregar grupos ao montar a tela
   useEffect(() => {
@@ -78,26 +87,48 @@ export default function AddItem() {
   };
 
   const handleSave = async () => {
-    if (!produtoSelecionado || !grupoId || !quantidade) {
+    if (!searchText.trim() || !grupoId || !quantidade) {
       Alert.alert(
         "Erro",
-        "Por favor, selecione um produto, um grupo e a quantidade."
+        "Por favor, informe o produto, selecione um grupo e a quantidade."
       );
       return;
     }
 
     setLoading(true);
     try {
+      let idFinalDoProduto = produtoSelecionado?.id;
+
+      if (!idFinalDoProduto) {
+        try {
+          const novoProduto = await ProdutoService.create(searchText);
+          idFinalDoProduto = novoProduto.id;
+        } catch (err: any) {
+          Alert.alert("Erro", "Este produto já existe ou não pôde ser criado.");
+          setLoading(false);
+          return;
+        }
+      }
+
       await ListaItemService.create({
         lista_id: Number(listaId),
-        produto_id: produtoSelecionado.id,
+        produto_id: Number(idFinalDoProduto),
         grupo_id: Number(grupoId),
         quantidade: Number(quantidade),
         preco_atual: preco ? parseFloat(preco.replace(",", ".")) : undefined,
       });
 
+      resetForm();
+
       Alert.alert("Sucesso", "Item adicionado!", [
-        { text: "OK", onPress: () => router.back() },
+        {
+          text: "Adicionar outro",
+          onPress: () => {},
+        },
+        {
+          text: "Voltar para a lista",
+          onPress: () => router.back(),
+        },
       ]);
     } catch (error: any) {
       Alert.alert("Erro", "Não foi possível salvar o item.");
@@ -107,14 +138,9 @@ export default function AddItem() {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      keyboardShouldPersistTaps="handled" // Importante para clicar na sugestão sem fechar o teclado
-    >
+    <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
       <View style={styles.form}>
         <Text style={styles.headerTitle}>Novo Item na Lista</Text>
-
-        {/* Campo de Busca de Produto */}
         <Text style={styles.label}>Produto (Busque pelo nome) *</Text>
         <View style={styles.inputSearchContainer}>
           <Ionicons

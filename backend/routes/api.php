@@ -24,4 +24,5 @@ Route::middleware('auth:api')->group(function () {
 
 Route::middleware('auth:api')->group(function () {
     Route::get('produtos/search', [ProdutoController::class, 'search']);
+    Route::post('produtos', [ProdutoController::class, 'store']);
 });
