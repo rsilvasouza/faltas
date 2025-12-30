@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domains\Categoria\Entities;
+namespace App\Domains\Produto\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class Produto extends Model
 {
     protected $fillable = ['nome'];
 }
