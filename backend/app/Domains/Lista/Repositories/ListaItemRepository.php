@@ -22,4 +22,13 @@ class ListaItemRepository
     {
         ListaItem::where('id', $itemId)->delete();
     }
+
+    public function updateStatus(int $itemId, bool $comprado)
+    {
+        $item = ListaItem::find($itemId);
+        if ($item) {
+            $item->comprado = $comprado;
+            $item->save();
+        }
+    }
 }

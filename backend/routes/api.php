@@ -11,6 +11,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
     Route::apiResource('listas', ListaController::class);
+    Route::patch('/listas/{id}/fechar', [ListaController::class, 'fechar']);
 });
 
 Route::middleware('auth:api')->group(function () {
@@ -21,6 +22,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('listas/{lista}/items', [ListaItemController::class, 'index']);
     Route::post('listas/{lista}/items', [ListaItemController::class, 'store']);
     Route::delete('listas/items/{item}', [ListaItemController::class, 'destroy']);
+    Route::patch('listas/items/{item}', [ListaItemController::class, 'updateStatus']);
 });
 
 Route::middleware('auth:api')->group(function () {

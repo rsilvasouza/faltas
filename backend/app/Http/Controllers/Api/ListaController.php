@@ -27,6 +27,17 @@ class ListaController extends Controller
         return response()->json($this->service->create($item), 201);
     }
 
+    public function show(Lista $lista)
+    {
+        return response()->json($this->service->getById($lista->id));
+    }
+
+    public function fechar($id)
+    {
+        $this->service->fecharLista((int) $id);
+        return response()->noContent();
+    }
+
     public function destroy(Lista $item)
     {
         $this->service->delete($item);

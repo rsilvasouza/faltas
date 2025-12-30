@@ -28,6 +28,16 @@ class ListaService
         return $this->repository->create($data);
     }
 
+    public function getById(int $id)
+    {
+        return $this->repository->getById($id);
+    }
+
+    public function fecharLista(int $id)
+    {
+        $this->repository->fecharLista($id);
+    }
+
     public function delete(Lista $lista)
     {
         $this->repository->delete($lista);

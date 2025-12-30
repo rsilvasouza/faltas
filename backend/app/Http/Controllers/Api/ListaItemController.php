@@ -37,6 +37,20 @@ class ListaItemController extends Controller
         return response()->json($this->service->create($listaItem), 201);
     }
 
+    public function updateStatus(Request $request, $itemId): JsonResponse
+    {
+        $data = $request->validate([
+            'comprado' => 'required|boolean',
+        ]);
+
+        try {
+            $this->service->updateStatus((int) $itemId, $data['comprado']);
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao atualizar status'], 500);
+        }
+    }
+
     public function destroy($itemId): JsonResponse
     {
         try {

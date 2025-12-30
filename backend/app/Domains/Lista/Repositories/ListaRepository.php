@@ -21,6 +21,20 @@ class ListaRepository
         return Lista::create($data);
     }
 
+    public function getById(int $id)
+    {
+        return Lista::find($id);
+    }
+
+    public function fecharLista(int $id)
+    {
+        $lista = Lista::find($id);
+        if ($lista) {
+            $lista->fechamento = now();
+            $lista->save();
+        }
+    }
+
     public function delete(Lista $lista)
     {
         return $lista->delete();

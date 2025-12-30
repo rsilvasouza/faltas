@@ -18,6 +18,15 @@ export const ListaService = {
     return response.data;
   },
 
+  getById: async (id: string): Promise<Lista> => {
+    const response = await api.get(`/listas/${id}`);
+    return response.data;
+  },
+  
+  fecharLista: async (id: string): Promise<void> => {
+    await api.patch(`/listas/${id}/fechar`);
+  },
+
   delete: async (id: string) => {
     await api.delete(`/listas/${id}`);
   }

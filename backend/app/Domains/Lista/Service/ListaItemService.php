@@ -20,6 +20,11 @@ class ListaItemService
         return $this->repository->create($data);
     }
 
+    public function updateStatus(int $itemId, bool $comprado)
+    {
+        $this->repository->updateStatus($itemId, $comprado);
+    }
+
     public function delete(int $itemId)
     {
         $this->repository->delete($itemId);

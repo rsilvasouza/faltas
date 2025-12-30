@@ -1,8 +1,6 @@
-import { api } from './api';
-import { Grupo } from './GrupoService';
-import { Produto } from './ProdutoService';
-
-
+import { api } from "./api";
+import { Grupo } from "./GrupoService";
+import { Produto } from "./ProdutoService";
 
 export interface Item {
   id: number;
@@ -13,7 +11,7 @@ export interface Item {
   comprado: boolean;
   preco_atual: string | number | null;
   observacao?: string;
-  produto: Produto; 
+  produto: Produto;
   grupo: Grupo;
 }
 
@@ -34,9 +32,14 @@ export const ListaItemService = {
     const response = await api.post(`/listas/${data.lista_id}/items`, data);
     return response.data;
   },
-  
+
+  updateStatus: async (itemId: number, comprado: boolean): Promise<any> => {
+    const response = await api.patch(`/listas/items/${itemId}`, { comprado });
+    return response.data;
+  },
+
   delete: async (itemId: number): Promise<any> => {
     const response = await api.delete(`/listas/items/${itemId}`);
     return response.data;
-  }
+  },
 };
