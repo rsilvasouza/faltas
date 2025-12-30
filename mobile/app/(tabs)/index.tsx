@@ -17,7 +17,7 @@ export default function Home() {
   const [filter, setFilter] = useState<"aberto" | "fechado">("aberto");
   const [lista, setLista] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const fetchListas = async () => {
     try {
       setLoading(true);
@@ -46,7 +46,15 @@ export default function Home() {
       item.fechamento !== null && item.fechamento !== undefined;
 
     return (
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() =>
+          router.push({
+            pathname: "/list/[id]",
+            params: { id: item.id, nome: item.nome },
+          })
+        }
+      >
         <View style={styles.cardInfo}>
           <Text style={styles.cardTitle}>{item.nome}</Text>
           <Text style={styles.cardSubtitle}>
