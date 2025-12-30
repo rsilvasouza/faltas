@@ -33,7 +33,8 @@ export const ListaItemService = {
     return response.data;
   },
   
-  delete: async (itemId: number): Promise<void> => {
-    await api.delete(`/items/${itemId}`);
+  delete: async (itemId: number): Promise<any> => {
+    const response = await api.delete(`/listas/items/${itemId}`);
+    return response.data;
   }
 };

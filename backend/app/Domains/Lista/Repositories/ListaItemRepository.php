@@ -17,4 +17,9 @@ class ListaItemRepository
     {
         return ListaItem::create($data);
     }
+
+    public function delete(int $itemId)
+    {
+        ListaItem::where('id', $itemId)->delete();
+    }
 }

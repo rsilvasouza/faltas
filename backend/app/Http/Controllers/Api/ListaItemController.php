@@ -35,4 +35,14 @@ class ListaItemController extends Controller
 
         return response()->json($this->service->create($listaItem), 201);
     }
+
+    public function destroy($itemId): JsonResponse
+    {
+        try {
+            $this->service->delete((int) $itemId);
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao deletar item'], 500);
+        }
+    }
 }

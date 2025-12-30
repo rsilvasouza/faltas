@@ -56,7 +56,7 @@ export default function ListaItens() {
       setItens(itens.filter((i) => i.id !== itemParaExcluir.id));
       setModalVisible(false);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível excluir o item.");
+      Alert.alert("Erro", "Não foi possível excluir o item do servidor.");
     }
   };
 

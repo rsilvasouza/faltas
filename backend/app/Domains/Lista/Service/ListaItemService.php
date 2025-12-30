@@ -19,4 +19,9 @@ class ListaItemService
     {
         return $this->repository->create($data);
     }
+
+    public function delete(int $itemId)
+    {
+        $this->repository->delete($itemId);
+    }
 }

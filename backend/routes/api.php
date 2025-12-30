@@ -20,6 +20,7 @@ Route::middleware('auth:api')->group(function () {
 Route::middleware('auth:api')->group(function () {
     Route::get('listas/{lista}/items', [ListaItemController::class, 'index']);
     Route::post('listas/{lista}/items', [ListaItemController::class, 'store']);
+    Route::delete('listas/items/{item}', [ListaItemController::class, 'destroy']);
 });
 
 Route::middleware('auth:api')->group(function () {
