@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('quantidade')->default(1);
             $table->boolean('comprado')->default(false);
             $table->decimal('preco_atual', 10, 2)->nullable();
-
+            $table->text('observacao')->nullable();
             $table->timestamps();
         });
     }

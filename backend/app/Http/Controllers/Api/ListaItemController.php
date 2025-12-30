@@ -30,7 +30,8 @@ class ListaItemController extends Controller
             'produto_id' => 'required|exists:produtos,id',
             'grupo_id' => 'required|exists:grupos,id',
             'quantidade' => 'required|integer|min:1',
-            'preco_atual' => 'nullable|numeric'
+            'preco_atual' => 'nullable|numeric',
+            'observacao' => 'nullable|string',
         ]);
 
         return response()->json($this->service->create($listaItem), 201);

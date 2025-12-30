@@ -11,7 +11,8 @@ export interface Item {
   grupo_id: number;
   quantidade: number;
   comprado: boolean;
-  preco_atual: string | number | null;  
+  preco_atual: string | number | null;
+  observacao?: string;
   produto: Produto; 
   grupo: Grupo;
 }
@@ -28,6 +29,7 @@ export const ListaItemService = {
     grupo_id: number;
     quantidade: number;
     preco_atual?: number;
+    observacao?: string;
   }) => {
     const response = await api.post(`/listas/${data.lista_id}/items`, data);
     return response.data;

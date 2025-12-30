@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,9 +14,12 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
 import { ListaItemService } from "@/src/services/ListaItemService";
-import { Produto } from "@/src/services/ProdutoService";
+import { Produto, ProdutoService } from "@/src/services/ProdutoService";
 import { Grupo, GrupoService } from "@/src/services/GrupoService";
-import { ProdutoService } from "@/src/services/ProdutoService";
+import {
+  formatarMoeda,
+  converterMoedaParaNumero,
+} from "@/src/utils/formatters";
 
 export default function AddItem() {
   const { listaId } = useLocalSearchParams();
@@ -30,12 +33,11 @@ export default function AddItem() {
 
   // Estados do Formulário
   const [searchText, setSearchText] = useState("");
-  const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(
-    null
-  );
+  const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(null);
   const [grupoId, setGrupoId] = useState("");
   const [quantidade, setQuantidade] = useState("1");
   const [preco, setPreco] = useState("");
+  const [observacao, setObservacao] = useState("");
 
   const resetForm = () => {
     setSearchText("");
@@ -43,6 +45,7 @@ export default function AddItem() {
     setGrupoId("");
     setQuantidade("1");
     setPreco("");
+    setObservacao("");
     setSugestoes([]);
   };
 
@@ -59,7 +62,7 @@ export default function AddItem() {
     loadGrupos();
   }, []);
 
-  // Busca de produtos dinâmica
+  // Busca de produtos dinâmica (Autocomplete)
   const handleSearch = async (text: string) => {
     setSearchText(text);
     setProdutoSelecionado(null);
@@ -87,6 +90,8 @@ export default function AddItem() {
   };
 
   const handleSave = async () => {
+    const precoParaEnviar = converterMoedaParaNumero(preco);
+    
     if (!searchText.trim() || !grupoId || !quantidade) {
       Alert.alert(
         "Erro",
@@ -99,6 +104,7 @@ export default function AddItem() {
     try {
       let idFinalDoProduto = produtoSelecionado?.id;
 
+      // Se o usuário digitou mas não selecionou da lista, cria o produto primeiro
       if (!idFinalDoProduto) {
         try {
           const novoProduto = await ProdutoService.create(searchText);
@@ -110,12 +116,14 @@ export default function AddItem() {
         }
       }
 
+      // Cria o item na lista vinculando ao produto e grupo
       await ListaItemService.create({
         lista_id: Number(listaId),
         produto_id: Number(idFinalDoProduto),
         grupo_id: Number(grupoId),
         quantidade: Number(quantidade),
-        preco_atual: preco ? parseFloat(preco.replace(",", ".")) : undefined,
+        preco_atual: precoParaEnviar > 0 ? precoParaEnviar : undefined,
+        observacao: observacao.trim(),
       });
 
       resetForm();
@@ -141,6 +149,8 @@ export default function AddItem() {
     <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
       <View style={styles.form}>
         <Text style={styles.headerTitle}>Novo Item na Lista</Text>
+
+        {/* Busca de Produto */}
         <Text style={styles.label}>Produto (Busque pelo nome) *</Text>
         <View style={styles.inputSearchContainer}>
           <Ionicons
@@ -151,14 +161,14 @@ export default function AddItem() {
           />
           <TextInput
             style={styles.inputSearch}
-            placeholder="Ex: Arroz, Feijão..."
+            placeholder="Ex: Caneta, Apontador..."
             value={searchText}
             onChangeText={handleSearch}
           />
           {searching && <ActivityIndicator style={{ marginRight: 10 }} />}
         </View>
 
-        {/* Lista de Sugestões de Produtos */}
+        {/* Lista de Sugestões */}
         {sugestoes.length > 0 && (
           <View style={styles.suggestionBox}>
             {sugestoes.map((item) => (
@@ -174,7 +184,7 @@ export default function AddItem() {
           </View>
         )}
 
-        {/* Campo de Grupo */}
+        {/* Seleção de Grupo */}
         <Text style={styles.label}>Grupo / Categoria *</Text>
         <View style={styles.pickerWrapper}>
           <Picker
@@ -192,7 +202,7 @@ export default function AddItem() {
           </Picker>
         </View>
 
-        {/* Quantidade e Preço */}
+        {/* Quantidade e Preço (Lado a Lado) */}
         <View style={styles.row}>
           <View style={{ flex: 1, marginRight: 10 }}>
             <Text style={styles.label}>Quantidade *</Text>
@@ -208,14 +218,27 @@ export default function AddItem() {
             <Text style={styles.label}>Preço Unit. (R$)</Text>
             <TextInput
               style={styles.input}
-              value={preco}
-              onChangeText={setPreco}
-              keyboardType="decimal-pad"
-              placeholder="0,00"
+              value={preco ? `R$ ${preco}` : ""}
+              onChangeText={(text) => setPreco(formatarMoeda(text))}
+              keyboardType="numeric"
+              placeholder="R$ 0,00"
             />
           </View>
         </View>
 
+        {/* Observação */}
+        <Text style={styles.label}>Observações (Opcional)</Text>
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          value={observacao}
+          onChangeText={setObservacao}
+          placeholder="Ex: Cor azul, marca específica, tamanho..."
+          multiline
+          numberOfLines={3}
+          textAlignVertical="top"
+        />
+
+        {/* Botão Salvar */}
         <TouchableOpacity
           style={[styles.saveButton, loading && { opacity: 0.7 }]}
           onPress={handleSave}
@@ -231,6 +254,7 @@ export default function AddItem() {
           )}
         </TouchableOpacity>
 
+        {/* Botão Cancelar */}
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => router.back()}
@@ -265,6 +289,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: "#e2e8f0",
+  },
+  textArea: {
+    height: 100,
+    paddingTop: 12,
   },
   inputSearchContainer: {
     flexDirection: "row",
