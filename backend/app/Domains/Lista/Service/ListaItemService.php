@@ -14,4 +14,9 @@ class ListaItemService
     {
         return $this->repository->getByLista($listaId);
     }
+
+    public function create(array $data)
+    {
+        return $this->repository->create($data);
+    }
 }

@@ -14,12 +14,12 @@ import {
   Swipeable,
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
-import { ListaItemService } from "@/src/services/ListaItemService";
+import { Item, ListaItemService } from "@/src/services/ListaItemService";
 
 export default function ListaItens() {
   const { id, nome } = useLocalSearchParams();
   const router = useRouter();
-  const [itens, setItens] = useState([]);
+  const [itens, setItens] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Estados para o Modal de Exclusão
@@ -79,7 +79,7 @@ export default function ListaItens() {
           </Text>
         </View>
         <Text style={styles.itemPreco}>
-          {item.preco_estimado ? `R$ ${item.preco_estimado}` : "---"}
+          {item.preco_atual ? `R$ ${item.preco_atual}` : "---"}
         </Text>
       </View>
     </Swipeable>

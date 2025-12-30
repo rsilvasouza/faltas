@@ -1,14 +1,8 @@
 import { api } from './api';
+import { Grupo } from './GrupoService';
+import { Produto } from './ProdutoService';
 
-export interface Produto {
-  id: number;
-  nome: string;
-}
 
-export interface Grupo {
-  id: number;
-  nome: string;
-}
 
 export interface Item {
   id: number;
@@ -17,7 +11,7 @@ export interface Item {
   grupo_id: number;
   quantidade: number;
   comprado: boolean;
-  preco_estimado: string | number | null;  
+  preco_atual: string | number | null;  
   produto: Produto; 
   grupo: Grupo;
 }
@@ -28,10 +22,14 @@ export const ListaItemService = {
     return response.data;
   },
 
-  create: async (listaId: string | number, nome: string): Promise<Item> => {
-    const response = await api.post(`/listas/${listaId}/items`, {
-      nome: nome
-    });
+  create: async (data: {
+    lista_id: number;
+    produto_id: number;
+    grupo_id: number;
+    quantidade: number;
+    preco_atual?: number;
+  }) => {
+    const response = await api.post(`/listas/${data.lista_id}/items`, data);
     return response.data;
   },
   

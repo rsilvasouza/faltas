@@ -12,4 +12,9 @@ class ListaItemRepository
             ->with(['produto', 'grupo'])
             ->get();
     }
+
+    public function create(array $data)
+    {
+        return ListaItem::create($data);
+    }
 }

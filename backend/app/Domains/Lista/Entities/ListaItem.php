@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ListaItem extends Model
 {
-    protected $fillable = ['nome', 'fechamento'];
+    protected $fillable = ['lista_id', 'produto_id', 'grupo_id', 'quantidade', 'preco_atual', 'comprado'];
 
     public function produto()
     {
