@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { ListaService } from "@/src/services/ListaService";
 
 export default function Home() {
@@ -30,9 +30,11 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    fetchListas();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchListas();
+    }, [])
+  );
 
   const filteredData = lista.filter((item) => {
     const isFechado = item.fechamento !== null && item.fechamento !== undefined;

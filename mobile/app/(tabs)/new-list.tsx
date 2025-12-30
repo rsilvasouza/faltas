@@ -18,10 +18,11 @@ export default function NewList() {
   const [loading, setLoading] = useState(false);
 
   const handleCreate = async () => {
+    if (!nome.trim()) return;
     setLoading(true);
     try {
       await ListaService.create(nome);
-
+      setName("");
       Alert.alert("Sucesso", "Lista criada!");
       router.back();
     } catch (error) {
