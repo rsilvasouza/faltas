@@ -3,6 +3,7 @@ import { useAuth } from "../store/auth";
 import { router } from "expo-router";
 
 export const api = axios.create({
+  // baseURL: "https://apifaltas.pnsfatima.com.br/api",
   baseURL: "http://192.168.1.101:8000/api",
 });
 
