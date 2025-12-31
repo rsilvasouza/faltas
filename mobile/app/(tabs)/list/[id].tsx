@@ -74,6 +74,19 @@ export default function ListaItens() {
     }
   };
 
+  const excluirItem = async () => {
+    if (!itemSelecionado) return;
+    try {
+      await ListaItemService.delete(itemSelecionado.id);
+      // Remove o item da lista localmente para atualizar a tela
+      setItens(itens.filter((i) => i.id !== itemSelecionado.id));
+      setModalExcluirVisible(false);
+      setItemSelecionado(null);
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível excluir o item.");
+    }
+  };
+
   // Ações de Swipe (Somente se não estiver fechada)
   const renderLeftActions = (item: Item) => {
     if (dataFechamento) return null;
@@ -241,6 +254,42 @@ export default function ListaItens() {
             </View>
           ))}
         </ScrollView>
+
+        {/* Modal de Confirmação de Exclusão */}
+        <Modal transparent visible={modalExcluirVisible} animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Ionicons
+                name="trash"
+                size={40}
+                color="#ef4444"
+                style={{ alignSelf: "center", marginBottom: 10 }}
+              />
+              <Text style={styles.modalTitle}>Excluir Item?</Text>
+              <Text style={styles.modalText}>
+                Deseja remover "{itemSelecionado?.produto?.nome}" da lista? Esta
+                ação não pode ser desfeita.
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={styles.btnCancel}
+                  onPress={() => {
+                    setModalExcluirVisible(false);
+                    setItemSelecionado(null);
+                  }}
+                >
+                  <Text style={styles.btnTextCancel}>Cancelar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.btnConfirm, { backgroundColor: "#ef4444" }]}
+                  onPress={excluirItem}
+                >
+                  <Text style={styles.btnTextConfirm}>Excluir</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
 
         {/* Modal de Detalhes (Acessível na lista fechada) */}
         <Modal transparent visible={modalObsVisible} animationType="slide">
