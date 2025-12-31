@@ -21,9 +21,8 @@ export default function TabLayout() {
 
   function logout() {
     setToken(null);
-    router.replace('/(auth)');
+    router.replace("/(auth)");
   }
-
 
   return (
     <Tabs
@@ -35,35 +34,29 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Faltas",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-              <Pressable onPress={logout}>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="sign-out"
-                    size={25}
-                    color={Colors[colorScheme ?? "light"].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-          ),
+          href: null,
+          headerShown: false,
         }}
       />
-      <Tabs.Screen
-        name="two"
-        options={{
-          title: "Tab Two",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-      />
-
       <Tabs.Screen
         name="new-list"
         options={{
           href: null,
           headerShown: false,
+        }}
+      />
+
+      <Tabs.Screen
+        name="list/[id]"
+        options={{
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="list/add-item"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
