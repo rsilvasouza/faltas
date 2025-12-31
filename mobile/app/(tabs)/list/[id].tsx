@@ -40,7 +40,7 @@ export default function ListaItens() {
         detalhesLista.fechamento ? detalhesLista.fechamento.toString() : null
       );
     } catch (error) {
-      console.error("Erro ao carregar dados:", error);
+      console.error("Erro ao carregar dados:");
     } finally {
       setLoading(false);
     }

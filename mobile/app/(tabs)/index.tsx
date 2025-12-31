@@ -24,7 +24,7 @@ export default function Home() {
       const data = await ListaService.getAll();
       setLista(data ?? []);
     } catch (error) {
-      console.error("Erro ao carregar listas:", error);
+      console.error("Erro ao carregar listas:");
     } finally {
       setLoading(false);
     }

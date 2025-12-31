@@ -56,7 +56,7 @@ export default function AddItem() {
         const data = await GrupoService.getAll();
         setGrupos(data);
       } catch (error) {
-        console.error("Erro ao carregar grupos", error);
+        console.error("Erro ao carregar grupos");
       }
     };
     loadGrupos();
@@ -73,7 +73,7 @@ export default function AddItem() {
         const data = await ProdutoService.search(text);
         setSugestoes(data);
       } catch (error) {
-        console.error(error);
+        console.error("Erro ao carregar produtos");
       } finally {
         setSearching(false);
       }
