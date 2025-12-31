@@ -34,13 +34,26 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          href: null,
-          headerShown: false,
+          title: "Início",
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          headerRight: () => (
+            <Pressable onPress={logout}>
+              {({ pressed }) => (
+                <FontAwesome
+                  name="sign-out"
+                  size={25}
+                  color={Colors[colorScheme ?? "light"].text}
+                  style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                />
+              )}
+            </Pressable>
+          ),
         }}
       />
       <Tabs.Screen
         name="new-list"
         options={{
+          title: "Nova Lista",
           href: null,
           headerShown: false,
         }}
@@ -49,6 +62,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="list/[id]"
         options={{
+          title: "Lista",
           href: null,
         }}
       />
@@ -56,6 +70,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="list/add-item"
         options={{
+          title: "Novo Item",
           href: null,
         }}
       />
