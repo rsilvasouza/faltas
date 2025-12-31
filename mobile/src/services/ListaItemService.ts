@@ -10,6 +10,7 @@ export interface Item {
   quantidade: number;
   comprado: boolean;
   preco_atual: string | number | null;
+  created_at: Date;  
   observacao?: string;
   produto: Produto;
   grupo: Grupo;

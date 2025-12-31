@@ -58,7 +58,11 @@ export default function Home() {
         <View style={styles.cardInfo}>
           <Text style={styles.cardTitle}>{item.nome}</Text>
           <Text style={styles.cardSubtitle}>
-            {estaFechado ? `Finalizada em: ${item.fechamento}` : "Aberta"}
+            {estaFechado
+              ? `Finalizada em: ${new Date(item.fechamento).toLocaleDateString(
+                  "pt-BR"
+                )}`
+              : "Aberta"}
           </Text>
         </View>
         <Ionicons

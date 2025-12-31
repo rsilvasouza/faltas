@@ -36,7 +36,9 @@ export default function ListaItens() {
       setItens(dataItens);
 
       const detalhesLista = await ListaService.getById(id as string);
-      setDataFechamento(detalhesLista.fechamento ? detalhesLista.fechamento.toString() : null);
+      setDataFechamento(
+        detalhesLista.fechamento ? detalhesLista.fechamento.toString() : null
+      );
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
     } finally {
@@ -256,6 +258,22 @@ export default function ListaItens() {
               <Text style={styles.obsTextContent}>
                 {itemSelecionado?.observacao || "Sem observações."}
               </Text>
+
+              <Text style={styles.detailLabelData}>
+                Criado em:{" "}
+                {itemSelecionado?.created_at
+                  ? new Date(itemSelecionado.created_at).toLocaleDateString(
+                      "pt-BR",
+                      {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }
+                    )
+                  : "---"}
+              </Text>
               <TouchableOpacity
                 style={styles.btnCloseObs}
                 onPress={() => setModalObsVisible(false)}
@@ -386,6 +404,12 @@ const styles = StyleSheet.create({
     color: "#94a3b8",
     fontWeight: "700",
     marginTop: 10,
+  },
+  detailLabelData: {
+    fontSize: 12,
+    color: "#ff0000ff",
+    fontWeight: "700",
+    marginTop: 20,
   },
   detailValue: { fontSize: 16, color: "#1e293b" },
   obsTextContent: {
