@@ -1,0 +1,11 @@
+/frontend-web/.env
+/frontend-web/.env.*
+!/frontend-web/.env.example
+/frontend-web/node_modules/
+/frontend-web/dist/
+/frontend-web/.vite/
+/frontend-web/.DS_Store
+/frontend-web/npm-debug.log*
+/frontend-web/yarn-debug.log*
+/frontend-web/yarn-error.log*
+/frontend-web/pnpm-debug.log*
