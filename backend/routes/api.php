@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ProdutoController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login/google', [AuthController::class, 'googleLogin']);
 
 Route::middleware('auth:api')->group(function () {
     Route::apiResource('listas', ListaController::class);
